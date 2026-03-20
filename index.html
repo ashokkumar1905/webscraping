@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sales Prediction</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 25px;
+      background: #f5f7fb;
+      color: #06203f;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: #2b8cff;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    form {
+      background: #ffffff;
+      padding: 18px;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      border: 1px solid #e5e7eb;
+    }
+
+    label {
+      font-size: 14px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #cdd3df;
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2b8cff;
+      box-shadow: 0 0 0 2px rgba(43,140,255,0.15);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .primary {
+      background: #2b8cff;
+      color: white;
+    }
+
+    .ghost {
+      background: white;
+      border: 1px solid #d0d7e5;
+      color: #374151;
+    }
+
+    .preview-box {
+      margin-top: 18px;
+      background: white;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #e6e9ef;
+    }
+
+    .small {
+      color: #6b7280;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">SP</div>
+      <div>
+        <h2 style="margin:0">Predict Sales</h2>
+        <div class="small">Fill the form and submit to get predicted sales.</div>
+      </div>
+    </header>
+
+    <form id="predictForm" action="/predict" method="POST">
+      <label>Date</label>
+      <input type="date" name="date" id="date" required>
+
+      <label>Store ID</label>
+      <input type="text" name="store" id="store" placeholder="e.g. 12" required>
+
+      <label>Item ID</label>
+      <input type="text" name="item" id="item" placeholder="e.g. A101" required>
+
+      <div class="actions">
+        <button type="submit" class="primary" id="submitBtn">Predict</button>
+        <button type="button" class="ghost" id="clearBtn">Clear</button>
+      </div>
+    </form>
+
+    <div class="preview-box">
+      <div class="small">Preview</div>
+      <p class="small">Date: <strong id="pv_date">—</strong></p>
+      <p class="small">Store: <strong id="pv_store">—</strong></p>
+      <p class="small">Item: <strong id="pv_item">—</strong></p>
+    </div>
+  </div>
+
+  <script>
+    // update preview in real time
+    ["date", "store", "item"].forEach(id => {
+      document.getElementById(id).addEventListener("input", () => {
+        document.getElementById("pv_date").textContent =
+          document.getElementById("date").value || "—";
+        document.getElementById("pv_store").textContent =
+          document.getElementById("store").value || "—";
+        document.getElementById("pv_item").textContent =
+          document.getElementById("item").value || "—";
+      });
+    });
+
+    // clear btn
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      document.getElementById("predictForm").reset();
+      document.getElementById("pv_date").textContent = "—";
+      document.getElementById("pv_store").textContent = "—";
+      document.getElementById("pv_item").textContent = "—";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prediction Result</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f7fafc;
+      margin: 0;
+      padding: 25px;
+      color: #031a33;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .box {
+      background: #ffffff;
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid #e6e9ef;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .row {
+      margin-bottom: 12px;
+      padding: 10px;
+      background: #fdfefe;
+      border-radius: 8px;
+      border: 1px solid #eef1f5;
+    }
+
+    .label {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .value {
+      font-size: 17px;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button, a {
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back {
+      background: white;
+      border: 1px solid #d1d8e3;
+      color: #444;
+    }
+
+    .primary {
+      background: #16a34a;
+      color: white;
+    }
+
+    .ghost {
+      background: white;
+      border: 1px solid #d6dde8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="box">
+      <h2>Prediction Result</h2>
+
+      <div class="row">
+        <div class="label">Date</div>
+        <div class="value">{{ date }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Store ID</div>
+        <div class="value">{{ store }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Item ID</div>
+        <div class="value">{{ item }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Linear Regression Prediction</div>
+        <div class="value">{{ linear_prediction | round(2) }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">XGBoost Prediction</div>
+        <div class="value">{{ xgb_prediction | round(2) }}</div>
+      </div>
+
+      <div class="actions">
+        <a href="/" class="back">Back</a>
+        <button class="primary" id="copyBtn">Copy</button>
+        <button class="ghost" id="csvBtn">Download CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Copy result as text
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      const text =
+        `Date: {{ date }}\n` +
+        `Store: {{ store }}\n` +
+        `Item: {{ item }}\n` +
+        `Linear: {{ linear_prediction | round(2) }}\n` +
+        `XGBoost: {{ xgb_prediction | round(2) }}`;
+
+      await navigator.clipboard.writeText(text);
+      document.getElementById("copyBtn").textContent = "Copied!";
+      setTimeout(() => (document.getElementById("copyBtn").textContent = "Copy"), 1500);
+    });
+
+    // Download CSV
+    document.getElementById("csvBtn").addEventListener("click", () => {
+      const csv =
+        "date,store,item,linear_prediction,xgb_prediction\n" +
+        `"{{ date }}","{{ store }}","{{ item }}","{{ linear_prediction }}","{{ xgb_prediction }}"`;
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `prediction_{{ date }}_{{ store }}_{{ item }}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
